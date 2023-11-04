@@ -1,0 +1,74 @@
+import csv
+import sys
+
+def read_chat_logs(file_path):
+    chat_logs = {}
+    with open(file_path, 'r', newline='', encoding='utf-8') as csv_file:
+        csv_reader = csv.DictReader(csv_file, delimiter=',')
+        for row in csv_reader:
+            # Process and extract info from csv row
+            student_name = row['StudentName']
+            message = row['Message']
+
+            # Add the data to chat_logs dictionary
+            if student_name in chat_logs:
+                chat_logs[student_name].append(message)
+            else:
+                chat_logs[student_name] = [message]
+
+    return chat_logs
+
+def analyze_participation(messages):
+    participation_score = 0
+
+    # Criteria 1: Number of Messages Sent
+    message_count = len(messages)
+    if message_count >= 50:
+        participation_score += 5
+    elif message_count >= 30:
+        participation_score += 4
+    elif message_count >= 15:
+        participation_score += 3
+    elif message_count >= 5:
+        participation_score += 2
+    else:
+        participation_score += 1
+
+    # Criteria 2: Average Word Count in Messages
+    total_word_count = sum(len(message.split()) for message in messages)
+    average_word_count = total_word_count / message_count
+
+    if average_word_count >= 20:
+        participation_score += 3
+    elif average_word_count >= 10:
+        participation_score += 2
+    elif average_word_count >= 5:
+        participation_score += 1
+
+    # Criteria 3: Engagement with Others
+    response_count = sum(1 for message in messages if "response" in message.lower())
+    participation_score += response_count
+
+    return participation_score
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <file_path>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
+    chat_logs = read_chat_logs(file_path)
+
+file_path = '/Users/aaliyah/Downloads/sample_chat_logs.csv'
+chat_logs = read_chat_logs(file_path)
+
+# Print chat logs to verify the contents
+print("Chat logs:")
+for student, messages in chat_logs.items():
+    print(f"Student: {student}, Messages: {messages}")
+
+# Print participation grades
+for student, messages in chat_logs.items():
+    participation_grade = analyze_participation(messages)
+    print(f"Student: {student}, Participation Grade: {participation_grade}")
+
