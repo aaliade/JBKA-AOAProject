@@ -8,6 +8,7 @@ class ChatLogAnalyzer:
         self.text = ""
         self.matches = []
         self.correct_answers = {}
+        self.answered_questions = set()
 
     def load_chat_logs(self, file_path):
         try:
@@ -47,66 +48,29 @@ class ChatLogAnalyzer:
     def analyze_participation(self, messages):
         participation_score = 0
 
-        # Criteria 1: Number of Messages Sent
-        message_count = len(messages)
-        if message_count >= 50:
-            participation_score += 5
-        elif message_count >= 30:
-            participation_score += 4
-        elif message_count >= 15:
-            participation_score += 3
-        elif message_count >= 5:
-            participation_score += 2
-        else:
-            participation_score += 1
+        for message in messages:
+            # Criteria 1: Correct Answers to Questions
+            correct_answer_count = self.count_correct_answers_keywords(message)
+            participation_score += correct_answer_count
+        
+        # Clear the set of answered questions after processing each student
+        self.answered_questions.clear()
+        
+        return participation_score
 
-        # Criteria 2: Average Word Count in Messages
-        total_word_count = sum(len(message.split()) for message in messages)
-        average_word_count = total_word_count / message_count
+    def count_correct_answers_keywords(self, message):
+        participation_score = 0
 
-        if average_word_count >= 20:
-            participation_score += 3
-        elif average_word_count >= 10:
-            participation_score += 2
-        elif average_word_count >= 5:
-            participation_score += 1
-
-        # Criteria 3: Engagement with Others
-        response_count = sum(1 for message in messages if "response" in message.lower())
-        participation_score += response_count
-
-        # Criteria 4: Productive Messages
-        productive_count = sum(1 for message in messages if self.is_productive(message))
-        participation_score += productive_count
-
-        # Criteria 5: Correct Answers to Questions
-        correct_answer_count = sum(1 for message in messages if self.is_correct_answer(message))
-        participation_score += correct_answer_count
+        # Iterate over each question and its correct answer
+        for question, correct_answer in self.correct_answers.items():
+            # Use keyword matching to find occurrences of any part of the correct answer in the message
+            if self.keyword_match(message.lower(), correct_answer.lower()):
+                if question not in self.answered_questions:  # Check if already answered
+                    participation_score += 1
+                    self.answered_questions.add(question)  # Add to answered questions
 
         return participation_score
 
-    def is_productive(self, message):
-        # Define criteria for a productive message
-        productive_keywords = ["question", "discussion", "answer", "explanation", "insight"]
-        message = message.lower()
-
-        return any(keyword in message for keyword in productive_keywords)
-    
-    def is_correct_answer(self, message):
-        # Check if a message contains a correct answer to a question
-        message = message.lower()
-
-        for question, correct_answer in self.correct_answers.items():
-            if question in message:
-                print(f"Debug: Question '{question}' found in message '{message}'")
-                if correct_answer in message:
-                    print(f"Debug: Correct answer '{correct_answer}' found in message '{message}'")
-                    return True
-                else:
-                    print(f"Debug: Incorrect answer found in message '{message}'")
-        return False
-
-
-    def count_correct_answers(self, messages):
-        correct_answers_count = sum(1 for message in messages if self.is_correct_answer(message))
-        return correct_answers_count
+    def keyword_match(self, text, keyword):
+        # Check if any part of the keyword is present in the text
+        return keyword in text.lower()
