@@ -1,1 +1,5 @@
-What is the capital of France?: ParisWho wrote Hamlet?: William ShakespeareWhat is the square root of 25?: 5
+What is the capital of France?: Paris
+Who wrote Hamlet?: William Shakespeare
+What is the square root of 25?: 5
+How many days are in a year?: 365
+2 Closest Planets to the Sun?: Mercury Venus
