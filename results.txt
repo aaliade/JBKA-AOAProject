@@ -1,0 +1,7 @@
+Results for arnett campbell class:
+
+Student Participation Grades:
+Aaliyah Adebukunola: Grade = 1   Questions Answered = 4   Correct Answers = 1
+John Brown: Grade = 1   Questions Answered = 2   Correct Answers = 1
+Abigail Brown: Grade = 0   Questions Answered = 1   Correct Answers = 0
+Nathan Alexander: Grade = 0   Questions Answered = 1   Correct Answers = 0

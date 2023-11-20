@@ -70,12 +70,15 @@ class ChatLogAnalyzerApp:
         for sender, messages in sender_messages.items():
             participation_grade = self.chat_log_analyzer.analyze_participation(messages)
             correct_answers_count = sum(self.chat_log_analyzer.count_correct_answers_keywords(message) for message in messages)
-            result_text += f" - {sender} \n      Grade: {correct_answers_count} \n      Questions Answered: {len(messages)} \n      Correct Answers: {correct_answers_count}\n"
-
+            result_text += f" - {sender} \n      Grade: {correct_answers_count} \n      Questions Answered: {len(messages)} \n     Correct Answers: {correct_answers_count}\n"
+        
+        
         self.display_area.config(state="normal")
         self.display_area.delete("1.0", tk.END)  # Clear the text display area
         self.display_area.insert(tk.END, result_text)
         self.display_area.config(state="disabled")
+
+        self.chat_log_analyzer.export_results_to_file()  # Call the export results to file function
 
     def run(self):
         self.root.mainloop()

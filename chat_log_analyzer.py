@@ -71,34 +71,41 @@ class ChatLogAnalyzer:
                     self.answered_questions.add(question)  # Add to answered questions
 
         return participation_score
-
     def keyword_match(self, text, keyword):
         # Check if any part of the keyword is present in the text
         return keyword in text.lower()
     
+    #creates and exports a file for results
     def export_results_to_file(self):
         try:
-            folder_path = os.path.dirname(os.path.abspath(__file__))
-            file_name = "results.txt"  # Specify the name of the results file
-            file_path = os.path.join(folder_path, file_name) # Creates the path to the results file
+             # Specify the file path for the results file
+            file_path = "results.txt"
 
-            # Open the results file for writing
+            # Open the file in write mode
             with open(file_path, "w") as file:
-                 # Write header with tutor's name
-                file.write(f"Results for {self.tutor_name}:\n\n")
+                file.write(f"Results for {self.tutor_name} class:\n\n")
+                file.write("Student Participation Grades:\n")
 
-                # Write Correct Answers section
-                file.write("Correct Answers:\n")
-                for question, answer in self.correct_answers.items():
-                    file.write(f"{question}: {answer}\n")
+                # Dictionary to store messages for each sender (student)
+                sender_messages = {}
+                 # Iterate over matches to organize messages by sender
+                for match in self.matches: 
+                    timestamp, sender, message = match
+                    if sender.lower() != self.tutor_name.lower():
+                        if sender not in sender_messages:
+                            sender_messages[sender] = []
+                        sender_messages[sender].append(message)
 
-                # Write Participation Results section
-                file.write("\nParticipation Results:\n")
-                for message in self.matches:
-                    file.write(f"{message[0]} From {message[1]}: {message[2]}\n")
+                 # Iterates over sender_messages to write each student's participation grade
+                for sender, messages in sender_messages.items():
+                    participation_grade = self.analyze_participation(messages)
+                    correct_answers_count = sum(self.count_correct_answers_keywords(message) for message in messages)
 
-             # Print a success message with the file path
+                     # Writes the information to the file
+                    file.write(f"{sender}: Grade = {correct_answers_count}   Questions Answered = {len(messages)}   Correct Answers = {correct_answers_count}\n")
+
+            # Prints a success message
             print(f"Results exported to {file_path}")
         except Exception as e:
-            print(f"Error exporting results: {e}") #Handles exceptions
-    
+             # Print an error message if an exception occurs during the export
+            print(f"Error exporting results: {e}")
