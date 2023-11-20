@@ -2,6 +2,8 @@
 	what is the capital of france
 10:10:25 From Aaliyah Adebukunola To Everyone:
 	paris
+10:10:26 From Kimarley Julal To Everyone:
+    the answer is paris
 10:10:27 From Aaliyah Adebukunola To Everyone:
 	Hi
 10:10:25 From Arnett Campbell To Everyone:
@@ -19,4 +21,6 @@
 10:10:48 From Nathan Alexander To Everyone:
 	big O
 10:10:48 From Arnett Campbell To Everyone:
-	What is life?
+	What is the square root of 25?
+10:12:33 From Kimarley Julal To Everyone:
+    the answer is 5
