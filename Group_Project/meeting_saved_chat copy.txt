@@ -4,6 +4,8 @@
 	paris
 10:10:27 From Aaliyah Adebukunola To Everyone:
 	Hi
+10:10:27 From Anthony Cooper To Everyone:
+	I belive it was Paris
 10:10:25 From Arnett Campbell To Everyone:
 	What is an algorithm?
 10:10:32 From Aaliyah Adebukunola To Everyone:
@@ -18,5 +20,38 @@
 	big O
 10:10:48 From Nathan Alexander To Everyone:
 	Think Parris Right?
+10:10:48 From Abigail Brown To Everyone:
+	Parris
 10:10:48 From Arnett Campbell To Everyone:
 	Who wrote Hamlet?
+10:10:50 From Abigail Brown To Everyone:
+	Parris
+10:10:52 From Abigail Brown To Everyone:
+	 William Shakespeare
+10:10:55 From Arnett Campbell To Everyone:
+	How many days are in a year?
+10:11:00 From Aaliyah Adebukunola To Everyone:
+	365
+10:11:00 From Arnett Campbell To Everyone:
+	What is the square root of 25?
+10:11:48 From Andre hinn To Everyone:
+	5
+10:11:52 From Abigail Brown To Everyone:
+	 65
+10:11:52 From Abigail Brown To Everyone:
+	5
+10:12:05 From Arnett Campbell To Everyone:
+	2 Closest Planets to the Sun?
+10:11:52 From Abigail Brown To Everyone:
+	Mercury
+10:11:52 From Abigail Brown To Everyone:
+	Venus
+10:11:52 From Abigail Brown To Everyone:
+	Mercury Venus
+10:11:52 From Abigail Brown To Everyone:
+	Mercury Venus
+10:11:52 From Anthony Cooper To Everyone:
+	5
+10:11:52 From Abigail Brown To Everyone:
+	Sorry Aout that
+
