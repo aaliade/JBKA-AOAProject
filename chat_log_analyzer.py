@@ -1,6 +1,7 @@
 import re
 import tkinter as tk
 from tkinter import filedialog
+import os
 
 class ChatLogAnalyzer:
     def __init__(self, tutor_name):
@@ -74,3 +75,30 @@ class ChatLogAnalyzer:
     def keyword_match(self, text, keyword):
         # Check if any part of the keyword is present in the text
         return keyword in text.lower()
+    
+    def export_results_to_file(self):
+        try:
+            folder_path = os.path.dirname(os.path.abspath(__file__))
+            file_name = "results.txt"  # Specify the name of the results file
+            file_path = os.path.join(folder_path, file_name) # Creates the path to the results file
+
+            # Open the results file for writing
+            with open(file_path, "w") as file:
+                 # Write header with tutor's name
+                file.write(f"Results for {self.tutor_name}:\n\n")
+
+                # Write Correct Answers section
+                file.write("Correct Answers:\n")
+                for question, answer in self.correct_answers.items():
+                    file.write(f"{question}: {answer}\n")
+
+                # Write Participation Results section
+                file.write("\nParticipation Results:\n")
+                for message in self.matches:
+                    file.write(f"{message[0]} From {message[1]}: {message[2]}\n")
+
+             # Print a success message with the file path
+            print(f"Results exported to {file_path}")
+        except Exception as e:
+            print(f"Error exporting results: {e}") #Handles exceptions
+    
