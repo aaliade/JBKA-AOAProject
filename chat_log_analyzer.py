@@ -101,8 +101,15 @@ class ChatLogAnalyzer:
                     participation_grade = self.analyze_participation(messages)
                     correct_answers_count = sum(self.count_correct_answers_keywords(message) for message in messages)
 
+                    # converts participation scores to percentages
+                    bonus_points = 0
+                    total_questions = len(open('question_and_answers.txt').readlines())
+                    if len(messages) > 0 and correct_answers_count < total_questions:
+                        bonus_points += 0.25
+                    final_score = str(round(((correct_answers_count + bonus_points) / total_questions) * 100, 0))
+
                      # Writes the information to the file
-                    file.write(f"{sender}: Grade = {correct_answers_count}   Questions Answered = {len(messages)}   Correct Answers = {correct_answers_count}\n")
+                    file.write(f"{sender}: Participation Score = {final_score} %  Questions Answered = {len(messages)}   Correct Answers = {correct_answers_count}\n")
 
             # Prints a success message
             print(f"Results exported to {file_path}")

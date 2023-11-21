@@ -81,7 +81,7 @@ class ChatLogAnalyzerApp:
                 bonus_points += 0.25
             final_score = str(round(((correct_answers_count + bonus_points) / total_questions) * 100, 0))
 
-            result_text += f" - {sender} \n      Participation Score: {final_score} % \n      Questions Answered: {len(messages)} \n     Correct Answers: {correct_answers_count}\n"
+            result_text += f" - {sender} \n     Participation Score: {final_score} % \n     Questions Answered: {len(messages)} \n     Correct Answers: {correct_answers_count}\n"
 
         self.display_area.config(state="normal")
         self.display_area.delete("1.0", tk.END)  # Clear the text display area
