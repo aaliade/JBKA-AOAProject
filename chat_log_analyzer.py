@@ -39,49 +39,58 @@ class ChatLogAnalyzer:
                 # Read all lines from the correct answers file
                 lines = file.readlines()
                 number = len(lines)
-                print("Correct",number)
-                # Extract quest"ions and answers from the file
+                print("Correct", number)
+                # Extract questions and answers from the file
                 for line in lines:
                     if ":" in line:
                         question, answer = map(str.strip, line.split(":", 1))
+                        print(f"Loaded: {question.lower()} => {answer.lower()}")
                         self.correct_answers[question.lower()] = answer.lower()
         except FileNotFoundError:
             print("Correct answers file not found. Defaulting to an empty dictionary.")
         return number
 
+
     def get_correct_answers(self, timestamps, senders, messages, sender_name):
         correct_answers_count = 0
         answered_questions = set()
         current_question = None
+        current_answer = None  # Variable to store the current correct answer
 
         for timestamp, sender, message in zip(timestamps, senders, messages):
-            print(f"Beginning {timestamp} {sender} {message} End==")
+            print(f"{timestamp} {sender} {message}")
 
             # Check if the message is from the tutor and contains a question
             if sender.lower() == self.tutor_name.lower() and "?" in message:
-                print(f"== {sender} {self.tutor_name} {message} \n")
-                current_question = message.lower()
+                print(f"Tutor Question: {sender} {self.tutor_name} {message} \n")
+                # Save the current question and its correct answer, reset the answered questions set
+                current_question = message.strip().lower()  # Added strip() to remove whitespaces
+                current_answer = self.correct_answers.get(current_question, None)
+                answered_questions = set()
+
+                print(f"Current Question and answer     {current_question} {current_answer}")
 
             # Check if the message is from the specified sender
             elif sender.lower() == sender_name.lower():
-                #  Check if the message is from a student and it's not a repeated answer
-                if current_question is not None and current_question not in answered_questions:
-                    if self.is_correct_answer(message):
-                        correct_answers_count += 1
-                        answered_questions.add(current_question)
-                        print(f"Correct Answer: {message}")
+                # Check if the current question exists (i.e., a tutor question has been encountered)
+                if current_question is not None:
+                    # Check if the sender has not answered the current question yet
+                    if current_question not in answered_questions:
+                        if current_answer is not None and self.is_correct_answer(message, current_answer):
+                            correct_answers_count += 1
+                            answered_questions.add(current_question)
+                            print(f"Correct Answer: {message}")
 
-        print(f"Beginning {correct_answers_count} End\n")
+        print(f"{correct_answers_count} End\n")
         return correct_answers_count
-    
-    def is_correct_answer(self, message):
-        # Iterate over each question and its correct answer
-        for question, correct_answer in self.correct_answers.items():
-            # Use keyword matching to find occurrences of any part of the correct answer in the message
-            if self.keyword_match(message.lower(), correct_answer.lower()):
-                return True
 
-        return False
+    def is_correct_answer(self, message, correct_answer):
+        # Check if the message is correct based on keyword matching with the stored correct answer
+        return self.word_keyword_match(message.lower(), correct_answer.lower())
+    
+    def word_keyword_match(self, text, keyword):
+        # Check if any part of the keyword is present in the text
+        return keyword in text.lower()
 
     def analyze_participation(self, messages):
         participation_score = 0
@@ -101,18 +110,31 @@ class ChatLogAnalyzer:
 
         # Iterate over each question and its correct answer
         for question, correct_answer in self.correct_answers.items():
-            # Use keyword matching to find occurrences of any part of the correct answer in the message
-            if self.keyword_match(message.lower(), correct_answer.lower()):
+            # Use Boyer-Moore matching to find occurrences of any part of the correct answer in the message
+            if self.boyer_moore_match(message.lower(), correct_answer.lower()):
                 if question not in self.answered_questions:  # Check if already answered
                     participation_score += 1
                     self.answered_questions.add(question)  # Add to answered questions
 
         return participation_score
-    def keyword_match(self, text, keyword):
-        # Check if any part of the keyword is present in the text
-        return keyword in text.lower()
+   
+    def boyer_moore_match(self, text, pattern):
+        # Preprocessing: Build the bad character skip table
+        bad_char_skip = {pattern[i]: max(1, len(pattern) - 1 - i) for i in range(len(pattern) - 1)}
+
+        # Search with Boyer-Moore algorithm
+        i = len(pattern) - 1
+        while i < len(text):
+            j = len(pattern) - 1
+            while text[i] == pattern[j]:
+                if j == 0:
+                    return True  # Match found
+                i -= 1
+                j -= 1
+            i += max(bad_char_skip.get(text[i], len(pattern)), 1)
+
+        return False  # No match found
     
-    #creates and exports a file for results
     def export_results_to_file(self):
         try:
              # Specify the file path for the results file
@@ -138,15 +160,8 @@ class ChatLogAnalyzer:
                     participation_grade = self.analyze_participation(messages)
                     correct_answers_count = sum(self.count_correct_answers_keywords(message) for message in messages)
 
-                    # converts participation scores to percentages
-                    bonus_points = 0
-                    total_questions = len(open('question_and_answers.txt').readlines())
-                    if len(messages) > 0 and correct_answers_count < total_questions:
-                        bonus_points += 0.25
-                    final_score = str(round(((correct_answers_count + bonus_points) / total_questions) * 100, 0))
-
                      # Writes the information to the file
-                    file.write(f"{sender}: Participation Score = {final_score} %  Questions Answered = {len(messages)}   Correct Answers = {correct_answers_count}\n")
+                    file.write(f"{sender}: Grade = {correct_answers_count}   Questions Answered = {len(messages)}   Correct Answers = {correct_answers_count}\n")
 
             # Prints a success message
             print(f"Results exported to {file_path}")

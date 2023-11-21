@@ -80,7 +80,9 @@ class ChatLogAnalyzerApp:
 
         for sender, messages in sender_messages.items():
             participation_grade = self.chat_log_analyzer.analyze_participation(messages)
+            print("Started Testing", sender)
             markedanswer  = self.chat_log_analyzer.get_correct_answers(chattimestamp, chatsender, chatmessage, sender)
+            print("Finished Testing", sender)
             correct_answers_count = sum(self.chat_log_analyzer.count_correct_answers_keywords(message) for message in messages)
             # converts participation scores to percentages
             bonus_points = 0
